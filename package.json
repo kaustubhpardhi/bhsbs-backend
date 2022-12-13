@@ -23,6 +23,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
+  "proxy": "https://billing-software-frontend-master.vercel.app/",
   "author": "",
   "license": "ISC"
 }
