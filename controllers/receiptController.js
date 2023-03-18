@@ -403,6 +403,60 @@ const receiptController = {
       res.status(400).send({ message: err.message });
     }
   },
+
+  paymentSms: async (req, res) => {
+    try {
+      const {
+        fName,
+        lName,
+        orderId,
+        mediaType,
+        amount,
+        product,
+        date,
+        country,
+        currency,
+        customerEmail,
+        mobileNo,
+      } = req.body;
+
+      const salt = "DAH88E3UWQ";
+      const key = "2PBP7IABZ2";
+      const str = `${key}|${orderId}|${fName}|${customerEmail}|${mobileNo}|${amount}|||||||${salt}`;
+
+      const hashFunction = (str) => {
+        // Create a new hash object
+        const hash = crypto.createHash("sha512");
+        // Update the hash with the input string
+        hash.update(str);
+        // Return the hashed value of the input string
+        return hash.digest("hex");
+      };
+      const hashSequence = hashFunction(str);
+
+      const data = {
+        key: key,
+        name: fName,
+        phone: mobileNo,
+        amount: amount,
+        hash: hashSequence,
+        email: customerEmail,
+        merchant_txn: orderId,
+      };
+
+      axios
+        .post("https://dashboard.easebuzz.in/easycollect/v1/create", data)
+        .then((data) => {
+          console.log(data);
+          res.status(200).send({ message: "sucess" });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  },
 };
 
 module.exports = receiptController;
